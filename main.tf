@@ -2,7 +2,7 @@ terraform {
   required_providers {
     vsphere = {
       source  = "hashicorp/vsphere"
-      version = "2.2.0"
+      version = "2.9.2"
     }
   }
 }
@@ -21,7 +21,7 @@ data "vsphere_datacenter" "dc" {
   name = var.vsphere_datacenter
 }
 
-data "vsphere_host" "hosts" {
+data "vsphere_host" "host" {
   name          = var.vsphere_host
   datacenter_id = data.vsphere_datacenter.dc.id
 }
@@ -31,8 +31,20 @@ data "vsphere_compute_cluster" "compute_cluster" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+# resource "vsphere_folder" "folder" {
+#   path          = var.vsphere_vm_folder
+#   type          = "vm"
+#   datacenter_id = data.vsphere_datacenter.dc.id
+# }
+
 data "vsphere_datastore" "datastore" {
   name          = var.vsphere_datastore
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_datastore" "datastores" {
+  count         = length(var.datastores)
+  name          = var.datastores[count.index]
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -46,13 +58,15 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-#Resource
+# Resource
 resource "vsphere_virtual_machine" "vm" {
   for_each = var.vms
 
   datastore_id     = data.vsphere_datastore.datastore.id
+  host_system_id   = data.vsphere_host.host.id
   resource_pool_id = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
   guest_id         = var.vm_guest_id
+  folder           = var.vm_folder
 
   network_interface {
     network_id   = data.vsphere_network.network.id
@@ -72,17 +86,17 @@ resource "vsphere_virtual_machine" "vm" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
-    customize {
-      linux_options {
-        host_name = each.value.name
-        domain    = var.vm_domain
-      }
-      network_interface {
-        ipv4_address    = each.value.vm_ip
-        ipv4_netmask    = var.vm_ipv4_netmask
-        dns_server_list = var.vm_dns_servers
-      }
-      ipv4_gateway = var.vm_ipv4_gateway
-    }
+    # customize {
+    #   linux_options {
+    #     host_name = each.value.name
+    #     domain    = var.vm_domain
+    #   }
+    #   network_interface {
+    #     ipv4_address    = each.value.vm_ip
+    #     ipv4_netmask    = var.vm_ipv4_netmask
+    #     dns_server_list = var.vm_dns_servers
+    #   }
+    #   ipv4_gateway = var.vm_ipv4_gateway
+    # }
   }
 }

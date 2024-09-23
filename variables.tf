@@ -10,28 +10,52 @@ variable "vsphere_password" {
 
 variable "vsphere_server" {
   description = "vCenter server FQDN or IP"
+  default     = "fv-vcenter7.vprod.datad.local"
 }
 
 # Infrastructure - vCenter / vSPhere environment
 
 variable "vsphere_datacenter" {
   description = "vSphere datacenter in which the virtual machine will be deployed"
+  default     = "Fibertown_DataCenter"
 }
 
 variable "vsphere_host" {
   description = "vSphere ESXi host FQDN or IP"
+  default     = "dd-ng9x-06.esxi.datad.local"
 }
 
 variable "vsphere_compute_cluster" {
   description = "vSPhere cluster in which the virtual machine will be deployed"
+  default     = "User_DEV_Cluster"
+}
+
+variable "vm_folder" {
+  default     = "/Users/Dev/RK Tech"
+}
+
+variable "datastores" {
+  type = list(string)
+  default = [
+    "Dev_UserCluster_LargevMs_DataStore_Lun1",
+    "Dev_UserCluster_LargevMs_DataStore_Lun2",
+    "Dev_UserCluster_LargevMs_DataStore_Lun3",
+    "Dev_UserCluster_LargevMs_DataStore_Lun4",
+    "Dev_UserCluster_LargevMs_DataStore_Lune5",
+    "Dev_UserCluster_LargevMs_DataStore_Lune6",
+    "Dev_UserCluster_LargevMs_DataStore_Lune7"
+  ]
+  description = "vSPhere datastore list"
 }
 
 variable "vsphere_datastore" {
   description = "Datastore in which the virtual machine will be deployed"
+  default     = "Dev_UserCluster_LargevMs_DataStore_Lune7"
 }
 
 variable "vsphere_network" {
   description = "Portgroup to which the virtual machine will be connected"
+  default     = "Dev_Network_Blade_NG9X_06"
 }
 
 variable "vm_firmware" {
