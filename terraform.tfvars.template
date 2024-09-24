@@ -3,23 +3,26 @@ vsphere_user     =
 vsphere_password = 
 
 #VM
-vm_folder        = 
-vm_template_name = 
+vm_folder        = "/Users/Dev/RK Tech/Dung_Ta"
+vm_template_name = "dev-template-redhat-50gb"
 vm_guest_id      = "rhel8_64Guest"
 vm_vcpu          = "8"
 vm_memory        = "16384"
 vm_ipv4_netmask  = "16"
 vm_ipv4_gateway  = "10.210.0.1"
 vm_dns_servers   = ["10.1.5.14", "10.1.5.3", "10.210.0.5", "10.210.0.4"]
-vm_disk_label    = "disk0"
-vm_disk_size     = "150"
-vm_disk_thin     = "true"
-vm_domain        = "localhost"
-vm_firmware      = "efi"
+interface        = "ens192"
+dhcp             = false
+
+vm_disk_label = "disk0"
+vm_disk_size  = "150"
+vm_disk_thin  = "true"
+vm_domain     = "localhost"
+vm_firmware   = "efi"
 
 vms = {
   redhat = {
-    name  = 
-    vm_ip = 
+    name  = "dev-redhat-150gb"
+    vm_ip = "10.210.60.135"
   }
 }
