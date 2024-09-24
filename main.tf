@@ -58,6 +58,23 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+# data "template_cloudinit_config" "cloud-config" {
+#   gzip          = true
+#   base64_encode = true
+
+#   # This is your actual cloud-config document.  You can actually have more than
+#   # one, but I haven't much bothered with it.
+#   part {
+#     content_type = "text/cloud-config"
+#     content      = <<-EOT
+#                      #cloud-config
+#                      packages:
+#                        - my-interesting-application
+#                        - rpmdevtools
+#                      EOT
+#   }
+# }
+
 # Resource
 resource "vsphere_virtual_machine" "vm" {
   for_each = var.vms
@@ -96,7 +113,7 @@ resource "vsphere_virtual_machine" "vm" {
   }
 
   extra_config = {
-    "guestinfo.metadata" = base64encode(templatefile("${path.module}/cloudinit/metadata.yml", {
+    "guestinfo.metadata" = base64encode(templatefile("${path.module}/cloudinit/metadata.yaml", {
       interface   = var.interface
       dhcp        = var.dhcp
       hostname    = each.value.name
@@ -105,6 +122,8 @@ resource "vsphere_virtual_machine" "vm" {
       nameservers = jsonencode(var.vm_dns_servers)
       gateway     = var.vm_ipv4_gateway
     }))
-    "guestinfo.metadata.encoding" = "base64"
+    "guestinfo.metadata.encoding" = "base64",
+    "guestinfo.userdata"          = base64encode(file("${path.module}/cloudinit/userdata.yaml"))
+    "guestinfo.userdata.encoding" = "base64"
   }
 }
