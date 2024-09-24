@@ -1,3 +1,3 @@
-output "datastore_selected" {
-  value = local.datastore_selected
-}
+# output "datastore_selected" {
+#   value = local.datastore_selected
+# }

@@ -62,11 +62,12 @@ data "vsphere_virtual_machine" "template" {
 resource "vsphere_virtual_machine" "vm" {
   for_each = var.vms
 
-  datastore_id     = data.vsphere_datastore.datastore.id
-  host_system_id   = data.vsphere_host.host.id
-  resource_pool_id = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
-  guest_id         = var.vm_guest_id
-  folder           = var.vm_folder
+  datastore_id         = data.vsphere_datastore.datastore.id
+  host_system_id       = data.vsphere_host.host.id
+  resource_pool_id     = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
+  guest_id             = var.vm_guest_id
+  folder               = var.vm_folder
+  tools_upgrade_policy = "upgradeAtPowerCycle"
 
   network_interface {
     network_id   = data.vsphere_network.network.id
@@ -86,17 +87,24 @@ resource "vsphere_virtual_machine" "vm" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
-    # customize {
-    #   linux_options {
-    #     host_name = each.value.name
-    #     domain    = var.vm_domain
-    #   }
-    #   network_interface {
-    #     ipv4_address    = each.value.vm_ip
-    #     ipv4_netmask    = var.vm_ipv4_netmask
-    #     dns_server_list = var.vm_dns_servers
-    #   }
-    #   ipv4_gateway = var.vm_ipv4_gateway
-    # }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      clone[0].template_uuid,
+    ]
+  }
+
+  extra_config = {
+    "guestinfo.metadata" = base64encode(templatefile("${path.module}/cloudinit/metadata.yml", {
+      interface   = var.interface
+      dhcp        = var.dhcp
+      hostname    = each.value.name
+      ip_address  = each.value.vm_ip
+      netmask     = var.vm_ipv4_netmask
+      nameservers = jsonencode(var.vm_dns_servers)
+      gateway     = var.vm_ipv4_gateway
+    }))
+    "guestinfo.metadata.encoding" = "base64"
   }
 }

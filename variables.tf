@@ -31,7 +31,7 @@ variable "vsphere_compute_cluster" {
 }
 
 variable "vm_folder" {
-  default     = "/Users/Dev/RK Tech"
+  default = "/Users/Dev/RK Tech"
 }
 
 variable "datastores" {
@@ -92,6 +92,12 @@ variable "vm_ipv4_gateway" {
 
 variable "vm_dns_servers" {
   description = "The list of DNS servers to configure on the virtual machine"
+}
+
+variable "interface" {
+}
+
+variable "dhcp" {
 }
 
 variable "vm_domain" {
