@@ -11,7 +11,7 @@ users:
   - name: devops
     gecos: Devops
     lock_passwd: false
-    groups: sudo, users, admin
+    groups: sudo, users, admin, wheel
     shell: /bin/bash
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
 system_info: 
