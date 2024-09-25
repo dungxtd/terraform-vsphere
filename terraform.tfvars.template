@@ -1,6 +1,6 @@
 #Provider
-vsphere_user     = 
-vsphere_password = 
+vsphere_user     = ""
+vsphere_password = ""
 
 #VM
 vm_folder        = "/Users/Dev/RK Tech/Dung_Ta"
@@ -22,7 +22,7 @@ vm_firmware   = "efi"
 
 vms = {
   redhat = {
-    name  = "dev-redhat-150gb"
-    vm_ip = "10.210.60.135"
+    name  = ""
+    vm_ip = ""
   }
 }
