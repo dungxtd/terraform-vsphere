@@ -1,6 +1,4 @@
 #cloud-config
-runcmd:
-  - [ sh, -c, echo "=========Hello There from Terraform and Cloud-init automation=========" > /root/testing-01]
 
 chpasswd: 
     list: |
@@ -20,11 +18,26 @@ system_info:
     lock_passwd: false
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
 
-    
-#disable_root: false #Enable root acce
+disable_root: true #Enable root acce
 ssh_pwauth: yes #Use pwd to access (otherwise follow official doc to use ssh-keys)
 
 package_upgrade: false
 
 packages:
   - jq
+
+resize_rootfs: true
+
+runcmd:
+  - [ sgdisk, -e, "/dev/sda" ]
+  - [ partprobe ]
+  - [ parted, -s, "/dev/sda", resizepart, 3, "100%" ]
+  - [ growpart, "/dev/sda", 3 ] 
+  - [ pvresize, "/dev/sda3" ] # Resize the physical volume
+  - [ lvextend, -l, "+100%FREE", "/dev/mapper/rhel-root" ] # Extend the logical volume
+  - [ xfs_growfs , "/dev/mapper/rhel-root" ] # Grow the XFS filesystem
+
+growpart:
+  mode: auto
+  devices: ["/dev/sda", 3]
+  ignore_growroot_disabled: false
