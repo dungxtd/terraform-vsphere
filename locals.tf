@@ -8,11 +8,12 @@ locals {
     merge(ds, { free_gb = ds.stats.free / 1024 / 1024 / 1024 })
   ]
 
-  filtered_datastores = [
-    for ds in data.vsphere_datastore.datastores :
-    ds if ds.stats.free >= min([for vm in var.vms : vm.vm_disk_size])
-    * 1024 * 1024 * 1024
-  ]
+  # min_disk_size = min([for vm in values(var.vms) : tonumber(vm.vm_disk_size)])
+
+  # filtered_datastores = [
+  #   for ds in data.vsphere_datastore.datastores :
+  #   ds if ds.stats.free >= local.min_disk_size * 1024 * 1024 * 1024
+  # ]
 
   # sorted_datastores = element(
   #     sort(keys(local.datastores)),
