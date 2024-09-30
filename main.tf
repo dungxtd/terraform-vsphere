@@ -37,10 +37,10 @@ data "vsphere_compute_cluster" "compute_cluster" {
 #   datacenter_id = data.vsphere_datacenter.dc.id
 # }
 
-data "vsphere_datastore" "datastore" {
-  name          = var.vsphere_datastore
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
+# data "vsphere_datastore" "datastore" {
+#   name          = var.vsphere_datastore
+#   datacenter_id = data.vsphere_datacenter.dc.id
+# }
 
 data "vsphere_datastore" "datastores" {
   count         = length(var.datastores)
@@ -58,28 +58,11 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-# data "template_cloudinit_config" "cloud-config" {
-#   gzip          = true
-#   base64_encode = true
-
-#   # This is your actual cloud-config document.  You can actually have more than
-#   # one, but I haven't much bothered with it.
-#   part {
-#     content_type = "text/cloud-config"
-#     content      = <<-EOT
-#                      #cloud-config
-#                      packages:
-#                        - my-interesting-application
-#                        - rpmdevtools
-#                      EOT
-#   }
-# }
-
 # Resource
 resource "vsphere_virtual_machine" "vm" {
   for_each = var.vms
 
-  datastore_id         = data.vsphere_datastore.datastore.id
+  datastore_id         = lookup(local.datastore_map, each.value.vm_datastore, null)
   host_system_id       = data.vsphere_host.host.id
   resource_pool_id     = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
   guest_id             = var.vm_guest_id
@@ -93,12 +76,12 @@ resource "vsphere_virtual_machine" "vm" {
 
   name = each.value.name
 
-  num_cpus = var.vm_vcpu
-  memory   = var.vm_memory
+  num_cpus = each.value.vm_vcpu
+  memory   = each.value.vm_memory * 1024
   firmware = var.vm_firmware
   disk {
     label            = var.vm_disk_label
-    size             = var.vm_disk_size
+    size             = each.value.vm_disk_size
     thin_provisioned = var.vm_disk_thin
   }
 

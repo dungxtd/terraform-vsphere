@@ -1,3 +1,8 @@
-# output "datastore_selected" {
-#   value = local.datastore_selected
+# output "datastores" {
+#   value = local.datastores
 # }
+
+# output "assign_datastore" {
+#   value = local.assign_datastore
+# }
+
