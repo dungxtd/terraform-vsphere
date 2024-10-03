@@ -2,7 +2,7 @@
 #   value = local.datastores
 # }
 
-# output "assign_datastore" {
-#   value = local.assign_datastore
-# }
+output "datastore_with_free_space" {
+  value = local.datastore_with_free_space
+}
 
