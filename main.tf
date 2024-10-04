@@ -31,17 +31,6 @@ data "vsphere_compute_cluster" "compute_cluster" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-# resource "vsphere_folder" "folder" {
-#   path          = var.vsphere_vm_folder
-#   type          = "vm"
-#   datacenter_id = data.vsphere_datacenter.dc.id
-# }
-
-# data "vsphere_datastore" "datastore" {
-#   name          = var.vsphere_datastore
-#   datacenter_id = data.vsphere_datacenter.dc.id
-# }
-
 data "vsphere_datastore" "datastores" {
   count         = length(var.datastores)
   name          = var.datastores[count.index]
@@ -53,8 +42,14 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+# data "vsphere_virtual_machine" "template" {
+#   name          = var.vm_template_name
+#   datacenter_id = data.vsphere_datacenter.dc.id
+# }
+
 data "vsphere_virtual_machine" "template" {
-  name          = var.vm_template_name
+  for_each      = var.vms
+  name          = coalesce(each.value.vm_template_name, var.vm_template_name)
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -71,7 +66,7 @@ resource "vsphere_virtual_machine" "vm" {
 
   network_interface {
     network_id   = data.vsphere_network.network.id
-    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
+    adapter_type = data.vsphere_virtual_machine.template[each.key].network_interface_types[0]
   }
 
   name = each.value.name
@@ -86,7 +81,7 @@ resource "vsphere_virtual_machine" "vm" {
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.template.id
+    template_uuid = data.vsphere_virtual_machine.template[each.key].id
   }
 
   lifecycle {

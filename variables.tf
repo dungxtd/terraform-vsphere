@@ -106,12 +106,13 @@ variable "vm_domain" {
 
 variable "vms" {
   type = map(object({
-    name         = string
-    vm_ip        = string
-    vm_vcpu      = number
-    vm_memory    = number
-    vm_disk_size = number
-    vm_datastore = string
+    name             = string
+    vm_ip            = string
+    vm_vcpu          = number
+    vm_memory        = number
+    vm_disk_size     = number
+    vm_datastore     = string
+    vm_template_name = string
   }))
   description = "List of virtual machines to be deployed"
 }

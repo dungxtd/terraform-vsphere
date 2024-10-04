@@ -18,12 +18,13 @@ vm_domain     = "localhost"
 vm_firmware   = "efi"
 
 vms = {
-  dev-redhat-cosign8 = {
-    name         = "dev-redhat-cosign8"
-    vm_ip        = "10.210.60.142"
-    vm_vcpu      = "8"
-    vm_memory    = "16"
-    vm_disk_size = "150"
-    vm_datastore = "Dev_UserCluster_LargevMs_DataStore_Lun3"
+  redhat1 = {
+    name             = "dev-redhat-test"
+    vm_ip            = "10.210.60.146"
+    vm_vcpu          = 8
+    vm_memory        = 16
+    vm_disk_size     = 150
+    vm_datastore     = "Dev_UserCluster_LargevMs_DataStore_Lun3"
+    vm_template_name = "dev-template-redhat-9.4"
   }
 }
