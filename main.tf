@@ -71,9 +71,10 @@ resource "vsphere_virtual_machine" "vm" {
 
   name = each.value.name
 
-  num_cpus = each.value.vm_vcpu
-  memory   = each.value.vm_memory * 1024
-  firmware = var.vm_firmware
+  num_cpus             = each.value.vm_vcpu
+  num_cores_per_socket = coalesce(each.value.vm_num_cores_per_socket, 1)
+  memory               = each.value.vm_memory * 1024
+  firmware             = var.vm_firmware
   disk {
     label            = var.vm_disk_label
     size             = each.value.vm_disk_size
