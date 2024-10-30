@@ -24,6 +24,8 @@ ssh_pwauth: yes #Use pwd to access (otherwise follow official doc to use ssh-key
 package_upgrade: false
 
 packages:
+  # - git
+  # - apt-transport-https
   - jq
 
 resize_rootfs: true
